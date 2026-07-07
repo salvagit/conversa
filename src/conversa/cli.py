@@ -54,10 +54,13 @@ def _cmd_run(args) -> int:
 
 def _cmd_rename(args) -> int:
     cfg = _load_cfg(args)
-    mapping = speakers.parse_mapping(args.map)
-    src = Path(args.src) if args.src else cfg.output_dir
-    dst = Path(args.to)
-    written = speakers.rename_base(args.base, mapping, src, dst)
+    try:
+        mapping = speakers.parse_mapping(args.map)
+        src = Path(args.src) if args.src else cfg.output_dir
+        dst = Path(args.to)
+        written = speakers.rename_base(args.base, mapping, src, dst)
+    except ValueError as exc:
+        sys.exit(f"ERROR: {exc}")
     if not written:
         sys.exit(f"ERROR: no encontré artefactos de '{args.base}' en {src}")
     for p in written:

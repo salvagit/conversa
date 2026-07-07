@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+
+# Secrets
+.env
+
+# Generated outputs
+transcripciones/
+relatos*/
+
+# Source recordings — never commit sensitive audio
+*.m4a
+*.mp3
+*.wav
+*.mp4
+*.ogg
+*.flac
+*.zip
+
+# OS
+.DS_Store

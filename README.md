@@ -49,7 +49,27 @@ Salidas (en `output_dir`, por defecto `transcripciones/`): `<base>.md`,
 hablantes, extensiones de audio, carpeta de salida y tokens. Los prompts viven en
 `src/conversa/prompts/*.txt` y se pueden editar sin tocar código.
 
+## Seguridad y privacidad
+
+Material de uso probatorio y sensible. Tené en cuenta el flujo de datos:
+
+- **El audio nunca sale de tu máquina.** La transcripción (WhisperX + diarización)
+  corre 100% local.
+- **El texto sí se envía a la API de Anthropic** en las etapas `clean`, `summarize`
+  y `narrate`. Si necesitás que **nada** salga de la máquina, usá solo
+  `conversa transcribe` (transcripción cruda, sin LLM). Revisá la política de
+  retención de datos de la API de Anthropic para tu caso.
+- **Secretos:** `HF_TOKEN` y `ANTHROPIC_API_KEY` van en variables de entorno o en
+  `.env` (excluido por `.gitignore`). Preferí variables de entorno y ejecutá la
+  herramienta en directorios de confianza (un `.env` ajeno podría inyectar otra
+  API key).
+- **Revisá siempre las salidas.** La transcripción es automática (errores de ASR) y
+  el LLM puede ser influido por el propio contenido del audio (prompt injection).
+  Para evidencia, la prueba primaria es la grabación; apoyate en el `.srt` con
+  timestamps para cotejar cifras y frases clave.
+
 ## Próximos pasos
 
 - Manifiesto de procedencia (modelo/versión/hash por salida) para cadena de custodia.
+- Flag `--local-only` / consentimiento explícito antes de enviar texto al LLM.
 - Interfaz gráfica para usuarios no técnicos.

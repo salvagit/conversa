@@ -83,7 +83,8 @@ def _with_retry(fn, label: str, cfg: Config):
         print(f"      retry {attempt + 1}/{cfg.max_retries} de {label} en {delay:.1f}s "
               f"({type(last_exc).__name__})…", flush=True)
         time.sleep(delay)
-    assert last_exc is not None
+    if last_exc is None:  # unreachable, but explicit (asserts vanish under -O)
+        raise RuntimeError("retry agotado sin excepción ni resultado")
     raise last_exc
 
 

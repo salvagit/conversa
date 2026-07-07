@@ -13,6 +13,18 @@ from pathlib import Path
 KNOWN_SUFFIXES = (".md", ".srt", ".limpia.md", ".resumen.md")
 
 
+def validate_base(base: str) -> str:
+    """Reject a base name that could escape its directory (path traversal).
+
+    A base must be a plain file stem: no separators, no ``..``, not absolute.
+    """
+    if (not base or base in (".", "..")
+            or "/" in base or "\\" in base
+            or base != Path(base).name):
+        raise ValueError(f"nombre base inválido (sin rutas ni '..'): {base!r}")
+    return base
+
+
 def parse_mapping(spec: str) -> dict[str, str]:
     """Parse ``"A=Salvador,B=Damián"`` into ``{"A": "Salvador", "B": "Damián"}``."""
     mapping: dict[str, str] = {}
@@ -37,6 +49,7 @@ def apply_to_text(text: str, mapping: dict[str, str]) -> str:
 def rename_base(base: str, mapping: dict[str, str],
                 src_dir: Path, dst_dir: Path) -> list[Path]:
     """Rewrite every known artifact of ``base`` from src_dir into dst_dir."""
+    validate_base(base)
     dst_dir.mkdir(parents=True, exist_ok=True)
     written: list[Path] = []
     for suffix in KNOWN_SUFFIXES:

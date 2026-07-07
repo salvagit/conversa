@@ -1,0 +1,20 @@
+# Ejemplo de configuración de conversa. Copialo a `conversa.toml` en el directorio
+# desde donde corras la herramienta (o generalo con `conversa init`).
+# Todas las claves son opcionales; lo omitido usa los defaults del código.
+
+[asr]
+model = "large-v3-turbo"        # large-v3-turbo | medium | small
+language = "es"
+min_speakers = 2
+max_speakers = 3
+threads = 8
+
+[io]
+output_dir = "transcripciones"
+audio_exts = [".m4a", ".mp3", ".wav", ".mp4", ".ogg", ".flac"]
+
+[llm]
+clean_model = "claude-haiku-4-5"
+summary_model = "claude-sonnet-5"
+narrate_model = "claude-sonnet-5"
+chunk_chars = 8000

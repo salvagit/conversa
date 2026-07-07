@@ -80,6 +80,19 @@ siga siendo `conversa` una vez instalado.
    `pip install <nombre-elegido>` como opción principal, con "desde código
    fuente" como alternativa para desarrollo.
 
+## Estado (2026-07-07)
+
+- ✅ Fase 1 (LICENSE), Fase 2 (topics), Fase 3.1-3.3 (metadata, CI, workflow de
+  publicación) hechas, commiteadas (`8adc173`) y pusheadas. CI corrido y
+  **verde en GitHub** (no solo local).
+- 🐛 Encontrado y arreglado en el camino: `python -m build` fallaba
+  (`force-include` de prompts duplicaba archivos). No lo detectaba
+  `pip install -e .` porque usa un code path distinto. Verificado con un
+  build real + instalación del wheel en venv limpio: `conversa --version`
+  y los prompts cargan bien.
+- ⏳ Pendiente, bloqueado por acción del usuario: 3.4 (cuenta de PyPI +
+  Trusted Publisher) y 3.5/3.6 (primer release + actualizar README).
+
 ## Verificación
 
 - `LICENSE` presente y detectado por GitHub.

@@ -45,8 +45,8 @@ def _raise_if_credit_error(exc: Exception) -> None:
     text = str(exc).lower()
     if "credit balance" in text or "billing" in text:
         raise InsufficientCreditsError(
-            "saldo de la API de Anthropic agotado. Cargá créditos en "
-            "console.anthropic.com → Billing y reintentá."
+            "Anthropic API credit balance exhausted. Add credits at "
+            "console.anthropic.com → Billing and retry."
         ) from exc
 
 
@@ -54,7 +54,7 @@ def client() -> anthropic.Anthropic:
     ensure_anthropic_key()
     import os
     if not os.environ.get("ANTHROPIC_API_KEY"):
-        raise SystemExit("ERROR: ANTHROPIC_API_KEY no está en el entorno ni en .env")
+        raise SystemExit("ERROR: ANTHROPIC_API_KEY not found in the environment or .env")
     return anthropic.Anthropic()
 
 
@@ -80,11 +80,11 @@ def _with_retry(fn, label: str, cfg: Config):
         if attempt == cfg.max_retries - 1:
             break
         delay = min(cfg.base_delay * (2 ** attempt), 60.0) + random.uniform(0, 1)
-        print(f"      retry {attempt + 1}/{cfg.max_retries} de {label} en {delay:.1f}s "
+        print(f"      retry {attempt + 1}/{cfg.max_retries} of {label} in {delay:.1f}s "
               f"({type(last_exc).__name__})…", flush=True)
         time.sleep(delay)
     if last_exc is None:  # unreachable, but explicit (asserts vanish under -O)
-        raise RuntimeError("retry agotado sin excepción ni resultado")
+        raise RuntimeError("retry loop exhausted without exception or result")
     raise last_exc
 
 
@@ -119,7 +119,7 @@ def clean_file(md_path: Path, cfg: Config,
     cleaned: list[str] = []
 
     for i, chunk in enumerate(chunks, 1):
-        print(f"    limpiando chunk {i}/{len(chunks)}…", flush=True)
+        print(f"    cleaning chunk {i}/{len(chunks)}…", flush=True)
         try:
             message = _with_retry(
                 lambda: c.messages.create(
@@ -132,7 +132,7 @@ def clean_file(md_path: Path, cfg: Config,
             if isinstance(exc, InsufficientCreditsError):
                 raise
             raise ChunkFailure(
-                partial, f"falló el chunk {i}/{len(chunks)} de {md_path.name}: {exc}"
+                partial, f"chunk {i}/{len(chunks)} of {md_path.name} failed: {exc}"
             ) from exc
         cleaned.append(_text_of(message))
 
@@ -156,7 +156,7 @@ def summarize_file(limpia_path: Path, cfg: Config,
             system=system, messages=[{"role": "user", "content": transcript}]) as stream:
             return stream.get_final_message()
 
-    message = _with_retry(_run, label="resumen", cfg=cfg)
+    message = _with_retry(_run, label="summary", cfg=cfg)
     out_path.write_text(_text_of(message) + "\n", encoding="utf-8")
     return out_path
 
@@ -171,6 +171,8 @@ def narrate_file(limpia_path: Path, context: str, cfg: Config, narrator: str,
     c = anthropic_client or client()
     system = load_prompt("narrate_brief" if brief else "narrate").format(narrator=narrator)
     transcript = limpia_path.read_text(encoding="utf-8")
+    # Kept in Spanish on purpose: this goes to the model alongside the Spanish
+    # system prompt (prompts/narrate*.txt) and a Spanish-language transcript.
     user = f"Contexto: {context}\n\nTranscripción:\n\n{transcript}"
 
     def _run():
@@ -179,5 +181,5 @@ def narrate_file(limpia_path: Path, context: str, cfg: Config, narrator: str,
             system=system, messages=[{"role": "user", "content": user}]) as stream:
             return stream.get_final_message()
 
-    message = _with_retry(_run, label="relato", cfg=cfg)
+    message = _with_retry(_run, label="narrative", cfg=cfg)
     return _text_of(message).strip()

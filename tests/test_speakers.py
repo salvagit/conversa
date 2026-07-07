@@ -7,8 +7,8 @@ from conversa import speakers
 
 
 def test_parse_mapping_basic():
-    assert speakers.parse_mapping("A=Salvador,B=Damián") == {
-        "A": "Salvador", "B": "Damián"}
+    assert speakers.parse_mapping("A=Ana,B=Beto") == {
+        "A": "Ana", "B": "Beto"}
 
 
 def test_parse_mapping_trims_and_uppercases():
@@ -38,7 +38,7 @@ def test_validate_base_rejects_traversal(bad):
 
 
 def test_validate_base_accepts_plain_stem():
-    assert speakers.validate_base("12-julio-2024-Damian-Soto") == "12-julio-2024-Damian-Soto"
+    assert speakers.validate_base("2024-07-12-team-meeting") == "2024-07-12-team-meeting"
 
 
 def test_rename_base_rejects_traversal(tmp_path: Path):

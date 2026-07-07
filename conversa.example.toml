@@ -1,6 +1,6 @@
-# Ejemplo de configuración de conversa. Copialo a `conversa.toml` en el directorio
-# desde donde corras la herramienta (o generalo con `conversa init`).
-# Todas las claves son opcionales; lo omitido usa los defaults del código.
+# Example conversa configuration. Copy it to `conversa.toml` in the directory
+# from which you run the tool (or generate it with `conversa init`).
+# All keys are optional; anything omitted falls back to the code defaults.
 
 [asr]
 model = "large-v3-turbo"        # large-v3-turbo | medium | small

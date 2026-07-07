@@ -180,8 +180,8 @@ class Transcriber:
         if idx + 1 >= len(chain):
             return False
         new_model = chain[idx + 1]
-        print(f"  ⚠️  memoria insuficiente con '{self.model_name}'; "
-              f"bajando a '{new_model}' y reintentando…", flush=True)
+        print(f"  ⚠️  insufficient memory with '{self.model_name}'; "
+              f"falling back to '{new_model}' and retrying…", flush=True)
         import gc
         del self.whisper_model
         gc.collect()

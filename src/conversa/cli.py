@@ -62,7 +62,7 @@ def _cmd_rename(args) -> int:
     except ValueError as exc:
         sys.exit(f"ERROR: {exc}")
     if not written:
-        sys.exit(f"ERROR: no encontré artefactos de '{args.base}' en {src}")
+        sys.exit(f"ERROR: found no artifacts for '{args.base}' in {src}")
     for p in written:
         print(f"  ✓ {p}")
     return 0
@@ -72,7 +72,7 @@ def _cmd_narrate(args) -> int:
     cfg = _load_cfg(args)
     limpia = Path(args.path)
     if not limpia.exists():
-        sys.exit(f"ERROR: no existe {limpia}")
+        sys.exit(f"ERROR: {limpia} does not exist")
     base = (limpia.name[: -len(".limpia.md")]
             if limpia.name.endswith(".limpia.md") else limpia.stem)
     out = limpia.with_name(f"{base}.relato.md")
@@ -92,7 +92,7 @@ def _cmd_init(args) -> int:
                           (".env.example", _ENV_TEMPLATE)):
         p = Path(name)
         if p.exists():
-            print(f"– {name} ya existe, salteo")
+            print(f"– {name} already exists, skipping")
         else:
             p.write_text(content, encoding="utf-8")
             print(f"  ✓ {name}")
@@ -104,42 +104,42 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--version", action="version", version=f"conversa {__version__}")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    def common(p, path_help="Audio, carpeta, .md o .limpia.md"):
+    def common(p, path_help="Audio file, folder, .md or .limpia.md"):
         p.add_argument("path", help=path_help)
-        p.add_argument("--force", action="store_true", help="Rehacer aunque exista la salida")
-        p.add_argument("--config", help="Ruta a un conversa.toml")
-        p.add_argument("--output-dir", help="Carpeta de salida (override)")
+        p.add_argument("--force", action="store_true", help="Redo even if output already exists")
+        p.add_argument("--config", help="Path to a conversa.toml")
+        p.add_argument("--output-dir", help="Output folder (override)")
 
-    p_run = sub.add_parser("run", help="Pipeline completo (transcribir→limpiar→resumir)")
+    p_run = sub.add_parser("run", help="Full pipeline (transcribe→clean→summarize)")
     common(p_run)
     p_run.set_defaults(func=_cmd_run, stage=None)
 
-    for name, stage, help_ in (("transcribe", "transcribe", "Solo transcribir (WhisperX)"),
-                               ("clean", "clean", "Solo limpiar muletillas"),
-                               ("summarize", "summarize", "Solo resumir")):
+    for name, stage, help_ in (("transcribe", "transcribe", "Transcribe only (WhisperX)"),
+                               ("clean", "clean", "Clean filler words only"),
+                               ("summarize", "summarize", "Summarize only")):
         p = sub.add_parser(name, help=help_)
         common(p)
         p.set_defaults(func=_cmd_run, stage=stage)
 
-    p_nar = sub.add_parser("narrate", help="Relato en 1ª persona desde una .limpia.md con nombres")
-    p_nar.add_argument("path", help="Archivo .limpia.md con nombres de hablante")
-    p_nar.add_argument("--narrator", required=True, help="Nombre del narrador (1ª persona)")
-    p_nar.add_argument("--context", help="Contexto para el encabezado (fecha, participantes)")
-    p_nar.add_argument("--brief", action="store_true", help="Versión condensada")
+    p_nar = sub.add_parser("narrate", help="First-person narrative from a named .limpia.md file")
+    p_nar.add_argument("path", help="A .limpia.md file with speaker names")
+    p_nar.add_argument("--narrator", required=True, help="Narrator's name (first person)")
+    p_nar.add_argument("--context", help="Context for the heading (date, participants)")
+    p_nar.add_argument("--brief", action="store_true", help="Condensed version")
     p_nar.add_argument("--config")
     p_nar.add_argument("--output-dir")
     p_nar.set_defaults(func=_cmd_narrate)
 
-    p_ren = sub.add_parser("rename", help="Reemplazar Speaker A/B/C por nombres")
-    p_ren.add_argument("base", help="Nombre base del audio (sin extensión)")
-    p_ren.add_argument("--map", required=True, help='Mapeo "A=Salvador,B=Damián"')
-    p_ren.add_argument("--src", help="Carpeta de origen (default: output_dir)")
-    p_ren.add_argument("--to", required=True, help="Carpeta destino")
+    p_ren = sub.add_parser("rename", help="Replace Speaker A/B/C with real names")
+    p_ren.add_argument("base", help="Audio base name (no extension)")
+    p_ren.add_argument("--map", required=True, help='Mapping "A=Ana,B=Beto"')
+    p_ren.add_argument("--src", help="Source folder (default: output_dir)")
+    p_ren.add_argument("--to", required=True, help="Destination folder")
     p_ren.add_argument("--config")
     p_ren.add_argument("--output-dir")
     p_ren.set_defaults(func=_cmd_rename)
 
-    p_init = sub.add_parser("init", help="Crear conversa.toml y .env.example en el directorio actual")
+    p_init = sub.add_parser("init", help="Create conversa.toml and .env.example in the current directory")
     p_init.set_defaults(func=_cmd_init)
 
     return parser
@@ -150,7 +150,7 @@ def main() -> None:
     args = parser.parse_args()
     target = getattr(args, "path", None)
     if target is not None and not Path(target).exists():
-        sys.exit(f"ERROR: no existe {target}")
+        sys.exit(f"ERROR: {target} does not exist")
     raise SystemExit(args.func(args))
 
 

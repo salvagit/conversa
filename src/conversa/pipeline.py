@@ -19,7 +19,7 @@ def resolve_bases(path: Path, cfg: Config) -> list[str]:
     if path.is_dir():
         files = sorted(f for ext in cfg.audio_exts for f in path.glob(f"*{ext}"))
         if not files:
-            sys.exit(f"ERROR: no hay audios ({', '.join(cfg.audio_exts)}) en {path}")
+            sys.exit(f"ERROR: no audio files ({', '.join(cfg.audio_exts)}) in {path}")
         return [f.stem for f in files]
     if path.suffix in cfg.audio_exts:
         return [path.stem]
@@ -27,7 +27,7 @@ def resolve_bases(path: Path, cfg: Config) -> list[str]:
     for suffix in (".limpia.md", ".md"):
         if name.endswith(suffix):
             return [name[: -len(suffix)]]
-    sys.exit(f"ERROR: no reconozco {path} (esperaba audio, .md o .limpia.md)")
+    sys.exit(f"ERROR: unrecognized {path} (expected audio, .md or .limpia.md)")
 
 
 def run(path: Path, cfg: Config, *, force: bool = False,
@@ -49,18 +49,18 @@ def run(path: Path, cfg: Config, *, force: bool = False,
             for i, base in enumerate(pending, 1):
                 audio = next((audio_dir / f"{base}{e}" for e in exts
                               if (audio_dir / f"{base}{e}").exists()), None)
-                print(f"\n[transcribir {i}/{len(pending)}] {base}", flush=True)
+                print(f"\n[transcribe {i}/{len(pending)}] {base}", flush=True)
                 if audio is None:
-                    print(f"  ✗ no encuentro el audio de {base}", flush=True)
+                    print(f"  ✗ can't find the audio for {base}", flush=True)
                     incomplete.append(base)
                     continue
                 try:
                     transcriber.transcribe(audio)
                 except Exception as exc:  # noqa: BLE001
-                    print(f"  ✗ FALLÓ transcripción: {exc}", flush=True)
+                    print(f"  ✗ transcription FAILED: {exc}", flush=True)
                     incomplete.append(base)
         else:
-            print("Transcripción: nada pendiente.", flush=True)
+            print("Transcription: nothing pending.", flush=True)
 
     client = postprocess.client() if (do_clean or do_summary) else None
     try:
@@ -69,13 +69,13 @@ def run(path: Path, cfg: Config, *, force: bool = False,
         if do_summary:
             _stage_summary(bases, cfg, client, force, incomplete)
     except postprocess.InsufficientCreditsError as exc:
-        print(f"\n✗ {exc}\n  Abortando: sin saldo no tiene sentido seguir.", flush=True)
+        print(f"\n✗ {exc}\n  Aborting: no point continuing without credits.", flush=True)
         return 2
 
     if incomplete:
-        print("\n⚠️  Quedaron incompletos: " + ", ".join(sorted(set(incomplete))), flush=True)
+        print("\n⚠️  Left incomplete: " + ", ".join(sorted(set(incomplete))), flush=True)
         return 1
-    print("\n✓ Listo.", flush=True)
+    print("\n✓ Done.", flush=True)
     return 0
 
 
@@ -84,21 +84,21 @@ def _stage_clean(bases, cfg, client, force, incomplete):
         md = cfg.output_dir / f"{base}.md"
         out = cfg.output_dir / f"{base}.limpia.md"
         if not md.exists():
-            print(f"– limpiar: falta {md.name}, salteo", flush=True)
+            print(f"– clean: missing {md.name}, skipping", flush=True)
             continue
         if out.exists() and not force:
-            print(f"– limpiar: ya existe {out.name}, salteo", flush=True)
+            print(f"– clean: {out.name} already exists, skipping", flush=True)
             continue
-        print(f"\n[limpiar] {md.name}", flush=True)
+        print(f"\n[clean] {md.name}", flush=True)
         try:
             print(f"  ✓ {postprocess.clean_file(md, cfg, client)}", flush=True)
         except postprocess.InsufficientCreditsError:
             raise
         except postprocess.ChunkFailure as exc:
-            print(f"  ✗ {exc.detail}\n    parcial en {exc.partial_path}", flush=True)
+            print(f"  ✗ {exc.detail}\n    partial saved at {exc.partial_path}", flush=True)
             incomplete.append(base)
         except Exception as exc:  # noqa: BLE001
-            print(f"  ✗ FALLÓ limpieza: {exc}", flush=True)
+            print(f"  ✗ cleanup FAILED: {exc}", flush=True)
             incomplete.append(base)
 
 
@@ -107,16 +107,16 @@ def _stage_summary(bases, cfg, client, force, incomplete):
         limpia = cfg.output_dir / f"{base}.limpia.md"
         out = cfg.output_dir / f"{base}.resumen.md"
         if not limpia.exists():
-            print(f"– resumir: falta {limpia.name}, salteo", flush=True)
+            print(f"– summarize: missing {limpia.name}, skipping", flush=True)
             continue
         if out.exists() and not force:
-            print(f"– resumir: ya existe {out.name}, salteo", flush=True)
+            print(f"– summarize: {out.name} already exists, skipping", flush=True)
             continue
-        print(f"\n[resumir] {limpia.name}", flush=True)
+        print(f"\n[summarize] {limpia.name}", flush=True)
         try:
             print(f"  ✓ {postprocess.summarize_file(limpia, cfg, client)}", flush=True)
         except postprocess.InsufficientCreditsError:
             raise
         except Exception as exc:  # noqa: BLE001
-            print(f"  ✗ FALLÓ resumen: {exc}", flush=True)
+            print(f"  ✗ summary FAILED: {exc}", flush=True)
             incomplete.append(base)

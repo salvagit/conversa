@@ -21,19 +21,19 @@ def validate_base(base: str) -> str:
     if (not base or base in (".", "..")
             or "/" in base or "\\" in base
             or base != Path(base).name):
-        raise ValueError(f"nombre base inválido (sin rutas ni '..'): {base!r}")
+        raise ValueError(f"invalid base name (no path separators or '..'): {base!r}")
     return base
 
 
 def parse_mapping(spec: str) -> dict[str, str]:
-    """Parse ``"A=Salvador,B=Damián"`` into ``{"A": "Salvador", "B": "Damián"}``."""
+    """Parse ``"A=Ana,B=Beto"`` into ``{"A": "Ana", "B": "Beto"}``."""
     mapping: dict[str, str] = {}
     for pair in spec.split(","):
         pair = pair.strip()
         if not pair:
             continue
         if "=" not in pair:
-            raise ValueError(f"mapeo inválido: {pair!r} (esperaba 'A=Nombre')")
+            raise ValueError(f"invalid mapping: {pair!r} (expected 'A=Name')")
         letter, name = pair.split("=", 1)
         mapping[letter.strip().upper()] = name.strip()
     return mapping

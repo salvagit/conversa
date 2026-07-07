@@ -49,6 +49,10 @@ Outputs (in `output_dir`, `transcripciones/` by default): `<base>.md`,
 audio extensions, output folder and tokens. Prompts live in
 `src/conversa/prompts/*.txt` and can be edited without touching code.
 
+The bundled prompts are written for Spanish-language audio (Rioplatense accent)
+and instruct the model to produce output **in Spanish** (summaries,
+narratives). Edit the prompt files if you need a different output language.
+
 ## Security and privacy
 
 Evidentiary, sensitive material. Keep the data flow in mind:

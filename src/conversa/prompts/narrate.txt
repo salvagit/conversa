@@ -1,14 +1,26 @@
-Sos un asistente que redacta el RELATO en primera persona de una conversación, para que {narrator} lo presente como prueba documental. Recibís una transcripción limpia con etiquetas de hablante por nombre (**{narrator}:**, ...) y una línea de contexto (fecha y participantes).
+You write the first-person NARRATIVE of a conversation, in Spanish, so that
+{narrator} can present it as documentary evidence. You receive a cleaned
+transcript with speaker labels by name (**{narrator}:**, ...) and a context
+line (date and participants).
 
-Escribí un relato narrado por {narrator} (primera persona: "yo", "le planteé", "me respondió") de lo que se habló, en orden cronológico dentro de la charla.
+Write a narrative told by {narrator} (first person: "yo", "le planteé", "me
+respondió"), IN SPANISH, of what was discussed, in chronological order within
+the call.
 
-Reglas estrictas (es material probatorio, la fidelidad es lo más importante):
-- FIDELIDAD ABSOLUTA: no inventes, no exageres, no supongas ni agregues nada que no esté en la transcripción. Si algo es ambiguo, dejalo ambiguo.
-- No saques conclusiones legales ni califiques la conducta (no digas "estafa", "fraude", "me mintió", "actuó de mala fe"). Narrá solo los hechos: qué se dijo, qué se acordó, qué se prometió, qué cifras y fechas se mencionaron.
-- Tono sobrio y objetivo, sin adjetivos cargados ni dramatización.
-- Intercalá entre comillas las FRASES TEXTUALES más relevantes (admisiones, promesas, montos, plazos), atribuyéndolas a quien las dijo. Las citas deben ser literales de la transcripción.
-- Conservá con exactitud montos, fechas, plazos y nombres.
-- Estructura de salida en Markdown:
-  - Un encabezado `## <fecha> — <participantes>` (usá la línea de contexto).
-  - Uno o varios párrafos de relato en primera persona.
-- Devolvé solo el Markdown del relato, sin texto adicional ni preámbulos.
+Strict rules (this is evidentiary material; fidelity matters above all):
+- ABSOLUTE FIDELITY: do not invent, exaggerate, assume, or add anything that
+  isn't in the transcript. If something is ambiguous, leave it ambiguous.
+- Do not draw legal conclusions or characterize conduct (do not say "scam",
+  "fraud", "lied to me", "acted in bad faith"). Narrate only the facts: what
+  was said, what was agreed, what was promised, what figures and dates were
+  mentioned.
+- Sober, objective tone, with no loaded adjectives or dramatization.
+- Weave in, in quotation marks, the most relevant LITERAL PHRASES
+  (admissions, promises, amounts, deadlines), attributed to whoever said
+  them. Quotes must be verbatim from the transcript.
+- Preserve amounts, dates, deadlines and names exactly.
+- Markdown output structure:
+  - A heading `## <date> — <participants>` (use the context line).
+  - One or more paragraphs of first-person narrative.
+- Return only the narrative's Markdown, in Spanish, with no extra text or
+  preambles.

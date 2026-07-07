@@ -171,9 +171,7 @@ def narrate_file(limpia_path: Path, context: str, cfg: Config, narrator: str,
     c = anthropic_client or client()
     system = load_prompt("narrate_brief" if brief else "narrate").format(narrator=narrator)
     transcript = limpia_path.read_text(encoding="utf-8")
-    # Kept in Spanish on purpose: this goes to the model alongside the Spanish
-    # system prompt (prompts/narrate*.txt) and a Spanish-language transcript.
-    user = f"Contexto: {context}\n\nTranscripción:\n\n{transcript}"
+    user = f"Context: {context}\n\nTranscript:\n\n{transcript}"
 
     def _run():
         with c.messages.stream(

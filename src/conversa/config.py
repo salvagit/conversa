@@ -43,6 +43,8 @@ class Config:
     model: str = "large-v3-turbo"
     device: str = "cpu"
     compute_type: str = "int8"
+    # Forced, not auto-detected: must match the audio. Also drives the LLM
+    # stages' output language (see Config.language_name / LANGUAGE_NAMES).
     language: str = "es"
     min_speakers: int = 2
     max_speakers: int = 3

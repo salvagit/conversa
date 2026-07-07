@@ -54,7 +54,15 @@ audio extensions, output folder and tokens. Prompts live in
 `conversa` works with any language WhisperX/Whisper supports (~100 languages).
 A single `language` setting (ISO 639-1 code, `"es"` by default) drives both
 transcription and the LLM stages: `clean`, `summarize` and `narrate` all write
-their output in that language. Set it in `conversa.toml`:
+their output in that language.
+
+**This is not auto-detected.** You must set `language` to match your audio;
+conversa always tells Whisper which language to expect instead of letting it
+guess. Whisper's own auto-detection is disabled on purpose — it's unreliable
+on noisy, accented phone-call audio, which is exactly this tool's main use
+case, and a wrong guess silently produces a garbled transcript. If you record
+audio in English but leave the default `language = "es"`, expect a bad
+transcription. Set it in `conversa.toml`:
 
 ```toml
 [general]

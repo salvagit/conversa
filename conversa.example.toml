@@ -4,9 +4,12 @@
 
 [general]
 # ISO 639-1 code. Drives both the Whisper ASR model and the language the LLM
-# stages (clean/summarize/narrate) write their output in. Any language Whisper
-# supports works; see src/conversa/config.py:LANGUAGE_NAMES for the ones with
-# a friendly display name (others still work, just less polished prompts).
+# stages (clean/summarize/narrate) write their output in. Must match your
+# audio's actual language — Whisper's auto-detection is intentionally
+# disabled (unreliable on noisy call audio), so a mismatch silently produces
+# a garbled transcript. Any language Whisper supports works; see
+# src/conversa/config.py:LANGUAGE_NAMES for the ones with a friendly display
+# name (others still work, just less polished prompts).
 language = "es"
 
 [asr]

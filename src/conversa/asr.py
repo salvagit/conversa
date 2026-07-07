@@ -145,7 +145,11 @@ def _is_memory_error(exc: Exception) -> bool:
 
 class Transcriber:
     """Loads WhisperX models once and transcribes audio files, with automatic
-    downgrade to a smaller Whisper model if transcription runs out of memory."""
+    downgrade to a smaller Whisper model if transcription runs out of memory.
+
+    ``config.language`` is passed straight to Whisper: it forces the expected
+    language rather than letting Whisper auto-detect it (unreliable on noisy
+    call audio), so it must match the audio."""
 
     def __init__(self, hf_token: str, config: Config, model_name: str | None = None):
         import whisperx

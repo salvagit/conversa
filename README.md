@@ -49,9 +49,24 @@ Outputs (in `output_dir`, `transcripciones/` by default): `<base>.md`,
 audio extensions, output folder and tokens. Prompts live in
 `src/conversa/prompts/*.txt` and can be edited without touching code.
 
-The bundled prompts are written for Spanish-language audio (Rioplatense accent)
-and instruct the model to produce output **in Spanish** (summaries,
-narratives). Edit the prompt files if you need a different output language.
+## Language
+
+`conversa` works with any language WhisperX/Whisper supports (~100 languages).
+A single `language` setting (ISO 639-1 code, `"es"` by default) drives both
+transcription and the LLM stages: `clean`, `summarize` and `narrate` all write
+their output in that language. Set it in `conversa.toml`:
+
+```toml
+[general]
+language = "en"   # or "pt", "fr", "de", ...
+```
+
+Languages listed in `src/conversa/config.py:LANGUAGE_NAMES` get a friendly name
+in the prompt instructions (e.g. "in Spanish"); anything else still works, the
+model just sees the raw ISO code instead. The Spanish (`es`) summary headings
+are hardcoded for exact, tested wording; other languages get the model's own
+translation of the English headings, which reads naturally but isn't pinned
+word-for-word.
 
 ## Security and privacy
 

@@ -18,6 +18,23 @@ from .secrets import ensure_anthropic_key
 
 _PROMPTS_DIR = Path(__file__).parent / "prompts"
 
+# Summary section headings, keyed by language code. Kept as an explicit table
+# (rather than letting the model translate them ad hoc) so the well-tested
+# default ("es") always produces byte-identical headings; any other language
+# falls back to the English set, which the summary prompt then asks the model
+# to translate into the target language for consistency with the body text.
+_SUMMARY_HEADINGS_EN = ("Participants", "Topics discussed", "Decisions made",
+                       "Pending / next steps", "Relevant verbatim quotes")
+SUMMARY_HEADINGS: dict[str, tuple[str, str, str, str, str]] = {
+    "es": ("Participantes", "Temas tratados", "Decisiones tomadas",
+           "Pendientes / próximos pasos", "Citas textuales relevantes"),
+    "en": _SUMMARY_HEADINGS_EN,
+}
+
+
+def summary_headings(language: str) -> tuple[str, str, str, str, str]:
+    return SUMMARY_HEADINGS.get(language, _SUMMARY_HEADINGS_EN)
+
 
 @lru_cache(maxsize=None)
 def load_prompt(name: str) -> str:
@@ -112,7 +129,7 @@ def clean_file(md_path: Path, cfg: Config,
     """Clean a transcript .md into <base>.limpia.md. Never touches the original."""
     c = anthropic_client or client()
     out_path = md_path.with_name(f"{md_path.stem}.limpia.md")
-    system = load_prompt("clean")
+    system = load_prompt("clean").format(language=cfg.language_name)
 
     blocks = _turn_blocks(md_path.read_text(encoding="utf-8"))
     chunks = _group_blocks(blocks, cfg.chunk_chars)
@@ -147,7 +164,9 @@ def summarize_file(limpia_path: Path, cfg: Config,
     base = (limpia_path.name[: -len(".limpia.md")]
             if limpia_path.name.endswith(".limpia.md") else limpia_path.stem)
     out_path = limpia_path.with_name(f"{base}.resumen.md")
-    system = load_prompt("summary")
+    h1, h2, h3, h4, h5 = summary_headings(cfg.language)
+    system = load_prompt("summary").format(
+        language=cfg.language_name, h1=h1, h2=h2, h3=h3, h4=h4, h5=h5)
     transcript = limpia_path.read_text(encoding="utf-8")
 
     def _run():
@@ -169,7 +188,8 @@ def narrate_file(limpia_path: Path, context: str, cfg: Config, narrator: str,
     ``context`` is a header hint (date + participants). ``narrator`` is the
     first-person subject. Returns the narrative Markdown (caller writes it)."""
     c = anthropic_client or client()
-    system = load_prompt("narrate_brief" if brief else "narrate").format(narrator=narrator)
+    system = load_prompt("narrate_brief" if brief else "narrate").format(
+        narrator=narrator, language=cfg.language_name)
     transcript = limpia_path.read_text(encoding="utf-8")
     user = f"Context: {context}\n\nTranscript:\n\n{transcript}"
 

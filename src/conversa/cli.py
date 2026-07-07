@@ -10,9 +10,15 @@ from .config import Config
 
 _CONFIG_TEMPLATE = """\
 # conversa config — override any default here. All keys are optional.
+[general]
+# ISO 639-1 code. Drives both the Whisper ASR model and the language the LLM
+# stages (clean/summarize/narrate) write their output in. Any language Whisper
+# supports works; see src/conversa/config.py:LANGUAGE_NAMES for the ones with
+# a friendly display name (others still work, just less polished prompts).
+language = "es"
+
 [asr]
 model = "large-v3-turbo"
-language = "es"
 min_speakers = 2
 max_speakers = 3
 threads = 8

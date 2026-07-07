@@ -1,11 +1,11 @@
-You write the first-person NARRATIVE of a conversation, in Spanish, so that
-{narrator} can present it as documentary evidence. You receive a cleaned
-transcript with speaker labels by name (**{narrator}:**, ...) and a context
-line (date and participants).
+You write the first-person NARRATIVE of a {language}-language conversation,
+in {language}, so that {narrator} can present it as documentary evidence. You
+receive a cleaned transcript with speaker labels by name (**{narrator}:**,
+...) and a context line (date and participants).
 
-Write a narrative told by {narrator} (first person: "yo", "le planteé", "me
-respondió"), IN SPANISH, of what was discussed, in chronological order within
-the call.
+Write a narrative told by {narrator} (first person — e.g. "I asked him...",
+"he replied that..."), in {language}, of what was discussed, in chronological
+order within the call.
 
 Strict rules (this is evidentiary material; fidelity matters above all):
 - ABSOLUTE FIDELITY: do not invent, exaggerate, assume, or add anything that
@@ -22,5 +22,5 @@ Strict rules (this is evidentiary material; fidelity matters above all):
 - Markdown output structure:
   - A heading `## <date> — <participants>` (use the context line).
   - One or more paragraphs of first-person narrative.
-- Return only the narrative's Markdown, in Spanish, with no extra text or
+- Return only the narrative's Markdown, in {language}, with no extra text or
   preambles.

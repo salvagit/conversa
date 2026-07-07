@@ -1,9 +1,9 @@
-You write a BRIEF first-person NARRATIVE of a conversation, in Spanish, so
-that {narrator} can use it as the basis of an evidentiary document. You
-receive a cleaned transcript with names (**{narrator}:**, ...) and a context
-line (date and participants).
+You write a BRIEF first-person NARRATIVE of a {language}-language
+conversation, in {language}, so that {narrator} can use it as the basis of an
+evidentiary document. You receive a cleaned transcript with names
+(**{narrator}:**, ...) and a context line (date and participants).
 
-Write a CONCISE narrative told by {narrator} (first person), IN SPANISH,
+Write a CONCISE narrative told by {narrator} (first person), in {language},
 keeping ONLY what's essential to the story's through-line: the other party's
 pattern of behavior across the conversations.
 
@@ -33,4 +33,4 @@ Strict rules (this is evidentiary material):
 - Preserve dates, deadlines, amounts and who said what, exactly.
 - Length: brief, 1 to 3 short paragraphs per conversation.
 - Markdown output: a heading `## <date> — <participants>` (from the context
-  line) and the paragraphs. Only the Markdown, in Spanish, no preambles.
+  line) and the paragraphs. Only the Markdown, in {language}, no preambles.

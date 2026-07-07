@@ -16,6 +16,26 @@ except ModuleNotFoundError:  # pragma: no cover - tomllib is stdlib on 3.11+
 
 DEFAULT_CONFIG_NAME = "conversa.toml"
 
+# ISO 639-1 code -> human-readable English name, used to phrase LLM prompt
+# instructions (e.g. "in Spanish"). `language` drives both the Whisper ASR
+# model and the LLM output language. Unlisted codes still work end to end;
+# the raw code is used as-is in the prompt (less polished, not incorrect).
+LANGUAGE_NAMES: dict[str, str] = {
+    "es": "Spanish", "en": "English", "pt": "Portuguese", "fr": "French",
+    "de": "German", "it": "Italian", "ca": "Catalan", "nl": "Dutch",
+    "ru": "Russian", "pl": "Polish", "tr": "Turkish", "ar": "Arabic",
+    "zh": "Chinese", "ja": "Japanese", "ko": "Korean", "hi": "Hindi",
+    "sv": "Swedish", "no": "Norwegian", "da": "Danish", "fi": "Finnish",
+    "el": "Greek", "he": "Hebrew", "uk": "Ukrainian", "cs": "Czech",
+    "ro": "Romanian", "hu": "Hungarian", "id": "Indonesian", "vi": "Vietnamese",
+    "th": "Thai", "sk": "Slovak", "bg": "Bulgarian", "hr": "Croatian",
+}
+
+
+def language_display_name(code: str) -> str:
+    """Human-readable name for a language code, for LLM prompt instructions."""
+    return LANGUAGE_NAMES.get(code.lower(), code)
+
 
 @dataclass
 class Config:
@@ -47,6 +67,11 @@ class Config:
     narrate_max_tokens: int = 8000
     max_retries: int = 5
     base_delay: float = 2.0
+
+    @property
+    def language_name(self) -> str:
+        """Human-readable name of `language`, for LLM prompt instructions."""
+        return language_display_name(self.language)
 
     @classmethod
     def load(cls, path: Path | None = None) -> "Config":

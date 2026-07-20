@@ -22,11 +22,19 @@ machine; only the text is, optionally, sent to the language model.
 
 ```bash
 python3.11 -m venv .venv && source .venv/bin/activate
-pip install -e .
+pip install conversa-transcribe
 conversa init          # creates conversa.toml and .env.example
 ```
 
 Fill in `.env` with `HF_TOKEN` and `ANTHROPIC_API_KEY`.
+
+### From source
+
+```bash
+python3.11 -m venv .venv && source .venv/bin/activate
+pip install -e .
+conversa init
+```
 
 ## Usage
 
